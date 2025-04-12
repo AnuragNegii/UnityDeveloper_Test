@@ -1,4 +1,5 @@
 using UnityEngine;
+using System;
 
 public class PlayerScript : MonoBehaviour{
 
@@ -22,10 +23,13 @@ public class PlayerScript : MonoBehaviour{
     private float turnSmoothVelocity;
     private bool isMoving;
 
+    private float freeFalling = 3.0f;
+
+    public static event Action PlayerDied;
+    public static event Action OnBoxDestroyed;
+
     private void Start(){
         gameInput.PlayerInputAction.Player.Jump.performed += Jump_Performed;
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
         rb = GetComponent<Rigidbody>();
         rb.freezeRotation = true;
     }
@@ -42,6 +46,7 @@ public class PlayerScript : MonoBehaviour{
             rb.drag = 0f;
         }
 
+        FreeFalling();
         SpeedControl();
         isMoving = inputVector != Vector2.zero && isGrounded;
     }
@@ -84,5 +89,24 @@ public class PlayerScript : MonoBehaviour{
 
     public bool IsGrounded(){
         return isGrounded;
+    }
+
+    private void OnCollisionEnter(Collision collision){
+        if (collision.transform.gameObject.tag == "Box"){
+            Destroy(collision.gameObject);
+            OnBoxDestroyed?.Invoke();
+        }
+    }
+
+    private void FreeFalling(){
+        if (!isGrounded){
+            freeFalling -= Time.deltaTime;
+            if (freeFalling <= 0){
+                PlayerDied?.Invoke();
+            }
+        }
+        if (isGrounded){
+            freeFalling = 3.0f;
+        }
     }
 }
