@@ -386,7 +386,7 @@ MonoBehaviour:
   m_YAxis:
     Value: 0.54
     m_SpeedMode: 0
-    m_MaxSpeed: 4
+    m_MaxSpeed: 3
     m_AccelTime: 0.1
     m_DecelTime: 0.1
     m_InputAxisName: Mouse Y
@@ -410,7 +410,7 @@ MonoBehaviour:
   m_XAxis:
     Value: 0
     m_SpeedMode: 0
-    m_MaxSpeed: 250
+    m_MaxSpeed: 350
     m_AccelTime: 0.1
     m_DecelTime: 0.1
     m_InputAxisName: Mouse X
@@ -1297,9 +1297,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 330585543}
-  m_LocalRotation: {x: 0.103327945, y: 0.000000018972745, z: -0.0000000019709645,
-    w: 0.9946474}
-  m_LocalPosition: {x: 0, y: 2.7446177, z: -3.4816384}
+  m_LocalRotation: {x: 0.059895184, y: 0.000000004795154, z: -2.8772318e-10, w: 0.9982047}
+  m_LocalPosition: {x: 0, y: 3.0348268, z: -3.4816387}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -4057,7 +4056,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 994367274}
-  m_LocalRotation: {x: 0.18566081, y: -0.000000018902854, z: 0.0000000035716161, w: 0.9826139}
+  m_LocalRotation: {x: 0.18566082, y: 0.000000018902853, z: -0.000000003571616, w: 0.9826139}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -6189,7 +6188,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1576180940}
-  m_LocalRotation: {x: 0.09133394, y: 0.000000017661801, z: -0.0000000016198926, w: 0.99582034}
+  m_LocalRotation: {x: 0.04362159, y: 1e-45, z: -0, w: 0.9990482}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -7716,13 +7715,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveSpeed: 30
-  rotateSpeed: 100
+  jumpForce: 8
+  airMultiplier: 0.1
   gameInput: {fileID: 909072907}
   cam: {fileID: 330585546}
   whatIsGround:
     serializedVersion: 2
     m_Bits: 64
-  groundDrag: 7
+  groundDrag: 3
   isGrounded: 0
   groundCheckHeight: 0.3
 --- !u!136 &2049718997
@@ -7888,7 +7888,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f4044717213e31446939f7bd49c896ea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_TrackedObjectOffset: {x: 0, y: 1.8, z: 0}
+  m_TrackedObjectOffset: {x: 0, y: 2.46, z: 0}
   m_LookaheadTime: 0
   m_LookaheadSmoothing: 0
   m_LookaheadIgnoreY: 0
@@ -7917,9 +7917,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_BindingMode: 4
   m_FollowOffset: {x: 0, y: 3.3581598, z: -6.8587847}
-  m_XDamping: 1
-  m_YDamping: 1
-  m_ZDamping: 1
+  m_XDamping: 0
+  m_YDamping: 0
+  m_ZDamping: 0
   m_AngularDampingMode: 0
   m_PitchDamping: 0
   m_YawDamping: 0

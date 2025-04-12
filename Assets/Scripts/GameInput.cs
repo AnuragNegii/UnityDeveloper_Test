@@ -1,14 +1,14 @@
 using UnityEngine;
 
 public class GameInput : MonoBehaviour{
-    private PlayerInputAction playerInputAction;
+    public PlayerInputAction PlayerInputAction{get; private set;}
     private void Awake(){
-        playerInputAction = new PlayerInputAction();
-        playerInputAction.Player.Movement.Enable();
+        PlayerInputAction = new PlayerInputAction();
+        PlayerInputAction.Player.Enable();
     }
 
     public Vector2 GetMovementVector(){
-        Vector2 movementVector = playerInputAction.Player.Movement.ReadValue<Vector2>();
+        Vector2 movementVector = PlayerInputAction.Player.Movement.ReadValue<Vector2>();
         return movementVector.normalized;
     }
 }
