@@ -15,6 +15,11 @@ public class PlayerScript : MonoBehaviour{
     [SerializeField] private bool isGrounded;
     [SerializeField]private float groundCheckHeight = 0.3f;
 
+    //Shadow Indicator for where gravity is gonna go
+    [SerializeField] private GameObject shadowPlayer;
+    private float shadowActiveTime = 2.0f;
+    private bool shadowActive;
+
     private Rigidbody rb;
     private Vector2 inputVector;
     private Vector3 direction;
@@ -23,35 +28,59 @@ public class PlayerScript : MonoBehaviour{
     private float turnSmoothVelocity;
     private bool isMoving;
 
-    private float freeFalling = 3.0f;
+    private float freeFalling = 5.0f;
 
     public static event Action PlayerDied;
     public static event Action OnBoxDestroyed;
 
+    //Creating custom Gravity with these
+    private Vector3 customGravity = Vector3.down;
+    private float gravityStrength = 15f;
+    private PlayerGravity playerGravity;
+
     private void Start(){
-        gameInput.PlayerInputAction.Player.Jump.performed += Jump_Performed;
         rb = GetComponent<Rigidbody>();
-        rb.freezeRotation = true;
+        rb.useGravity = false;
+        playerGravity = PlayerGravity.Down;
+
+        shadowPlayer.SetActive(false);
+
+        gameInput.OnEnterPerformed += Enter_Performed;
+
+        gameInput.OnJumpPerformed += Jump_Performed;
+        gameInput.OnUpPerformed += Up_Performed;
+        gameInput.OnDownPerformed += Down_Performed;
+        gameInput.OnLeftPerformed += Left_Performed;
+        gameInput.OnRightPerformed += Right_Performed;
     }
 
     private void Update(){
         inputVector = gameInput.GetMovementVector();
         direction = new Vector3(inputVector.x, 0f, inputVector.y);
-
         isGrounded = Physics.Raycast(transform.position, Vector3.down, groundCheckHeight, whatIsGround);
-
         if (isGrounded){
             rb.drag = groundDrag;
         }else{
             rb.drag = 0f;
         }
-
         FreeFalling();
         SpeedControl();
+
+
+        //gravity indicator activate or deactivate
+        if (shadowActive){
+            shadowActiveTime -= Time.deltaTime;
+            if (shadowActiveTime <= 0){
+                shadowPlayer.SetActive(false);
+                shadowActiveTime = 2.0f;
+            }
+        }
         isMoving = inputVector != Vector2.zero && isGrounded;
     }
     private void FixedUpdate(){
         MovePlayer();
+        //Gravity Manipulation
+        GravityManipulation();
     }
 
     private void MovePlayer(){
@@ -76,13 +105,59 @@ public class PlayerScript : MonoBehaviour{
         }
     }
 
-    private void Jump_Performed(UnityEngine.InputSystem.InputAction.CallbackContext context){
+    private void Enter_Performed(object sender, EventArgs e){
+        switch(playerGravity){
+            case (PlayerGravity.Up):
+                customGravity = transform.up* gravityStrength;
+                break;
+            case PlayerGravity.Down:
+                customGravity = -transform.up* gravityStrength;
+                break;
+            case PlayerGravity.Left:
+                customGravity = -transform.right* gravityStrength;
+                break;
+            case PlayerGravity.Right:
+                customGravity = transform.right* gravityStrength;
+                break;
+            default:
+                customGravity = -transform.up* gravityStrength;
+                break;
+        }
+    }
+    private void Jump_Performed(object sender, EventArgs e){
         if (isGrounded){
             rb.velocity = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
             rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
         }
     }
 
+    private void Up_Performed(object sender, EventArgs e){
+        playerGravity = PlayerGravity.Up;
+        shadowPlayer.SetActive(true);
+        shadowPlayer.transform.rotation = Quaternion.Euler(-180f, 0f, 0f);
+        shadowActive = true;
+    }
+
+    private void Down_Performed(object sender, EventArgs e){
+        playerGravity = PlayerGravity.Down;
+        shadowPlayer.SetActive(true);
+        shadowActive = true;
+        shadowPlayer.transform.rotation = transform.rotation*Quaternion.Euler(0f, 0f, 0f);
+    }
+     
+    private void Left_Performed(object sender, EventArgs e){
+        playerGravity = PlayerGravity.Left;
+        shadowPlayer.SetActive(true);
+        shadowActive = true;
+        shadowPlayer.transform.rotation = transform.rotation*Quaternion.Euler(0f, 0f, -90f);
+    }
+
+    private void Right_Performed(object sender, EventArgs e){
+        playerGravity = PlayerGravity.Right;
+        shadowPlayer.SetActive(true);
+        shadowActive = true;
+        shadowPlayer.transform.rotation = transform.rotation*Quaternion.Euler(0f, 0f, 90f);
+    }
     public bool IsMoving(){
         return isMoving;
     }
@@ -106,7 +181,20 @@ public class PlayerScript : MonoBehaviour{
             }
         }
         if (isGrounded){
-            freeFalling = 3.0f;
+            freeFalling = 5.0f;
         }
     }
+
+    private void GravityManipulation(){
+        rb.AddForce(customGravity * gravityStrength, ForceMode.Acceleration);
+    }
+}
+
+
+
+public enum PlayerGravity{
+    Up,
+    Down,
+    Left,
+    Right
 }

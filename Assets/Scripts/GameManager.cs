@@ -7,7 +7,7 @@ public class GameManager: MonoBehaviour{
     public static GameManager Instance{get; private set;}
 
     [SerializeField] private int noOfBoxes = 5;
-    [SerializeField] private float totalTime = 1;  
+    [SerializeField] private float totalTime = 120f;  
     [SerializeField] private TextMeshProUGUI tmpText;
     [SerializeField] private TextMeshProUGUI boxRemaining;
     [SerializeField] private GameObject gameOverPanel;
