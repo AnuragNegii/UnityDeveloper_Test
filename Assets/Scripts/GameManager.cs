@@ -12,6 +12,9 @@ public class GameManager: MonoBehaviour{
     [SerializeField] private TextMeshProUGUI boxRemaining;
     [SerializeField] private GameObject gameOverPanel;
     [SerializeField] private Button restartButton;
+    [SerializeField] private GameObject wonGamePanel;
+    [SerializeField] private Button restartButtonWon;
+
 
     private void OnEnable(){
         if (Instance != null && Instance != this){
@@ -27,7 +30,9 @@ public class GameManager: MonoBehaviour{
         tmpText.text = "Time:"+(int)totalTime;
         boxRemaining.text = "Box: "+ noOfBoxes;
         gameOverPanel.SetActive(false);
+        wonGamePanel.SetActive(false);
         restartButton.onClick.AddListener(RestartGame);
+        restartButtonWon.onClick.AddListener(RestartGame);
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
         Time.timeScale = 1f; // ⏵ Resume time
@@ -38,6 +43,10 @@ public class GameManager: MonoBehaviour{
         if (totalTime <= 0 && noOfBoxes > 0){
             totalTime = 0;
             Player_Dead();
+        }
+
+        if (totalTime > 0 && noOfBoxes <= 0){
+            Player_Won();
         }
         
 //ui element call
@@ -51,6 +60,14 @@ public class GameManager: MonoBehaviour{
 
     private void Player_Dead(){
         gameOverPanel.SetActive(true);
+        Time.timeScale = 0f; // ⏸ Pause the game
+
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+    }
+
+    private void Player_Won(){
+        wonGamePanel.SetActive(true);
         Time.timeScale = 0f; // ⏸ Pause the game
 
         Cursor.lockState = CursorLockMode.None;

@@ -61,7 +61,7 @@ public class PlayerScript : MonoBehaviour{
         inputVector = gameInput.GetMovementVector();
         direction = new Vector3(inputVector.x, 0f, inputVector.y);
         isGrounded = Physics.Raycast(playerVisualMidPoint.position, customGravity.normalized, groundCheckHeight, whatIsGround);
-        Debug.DrawRay(playerVisualMidPoint.position, customGravity.normalized * groundCheckHeight, isGrounded ? Color.red: Color.green, 100f);
+        //Debug.DrawRay(playerVisualMidPoint.position, customGravity.normalized * groundCheckHeight, isGrounded ? Color.red: Color.green, 100f);
 
         if (isGrounded){
             rb.drag = groundDrag;
