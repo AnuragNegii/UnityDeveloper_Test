@@ -140,7 +140,7 @@ public class PlayerScript : MonoBehaviour{
     private void Jump_Performed(object sender, EventArgs e){
         if (isGrounded){
             rb.velocity = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
-            rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+            rb.AddForce(-customGravity* jumpForce, ForceMode.Impulse);
         }
     }
 
