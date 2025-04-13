@@ -18,7 +18,7 @@ public class PlayerScript : MonoBehaviour{
     //Shadow Indicator for where gravity is gonna go
     [SerializeField] private GameObject shadowPlayer;
 
-    [SerializeField] private Transform playerVisual;
+    [SerializeField] private Transform playerVisualMidPoint;
     private float shadowActiveTime = 2.0f;
     private bool shadowActive;
 
@@ -60,7 +60,9 @@ public class PlayerScript : MonoBehaviour{
     private void Update(){
         inputVector = gameInput.GetMovementVector();
         direction = new Vector3(inputVector.x, 0f, inputVector.y);
-        isGrounded = Physics.Raycast(transform.position, Vector3.down, groundCheckHeight, whatIsGround);
+        isGrounded = Physics.Raycast(playerVisualMidPoint.position, customGravity.normalized, groundCheckHeight, whatIsGround);
+        Debug.DrawRay(playerVisualMidPoint.position, customGravity.normalized * groundCheckHeight, isGrounded ? Color.red: Color.green, 100f);
+
         if (isGrounded){
             rb.drag = groundDrag;
         }else{
@@ -115,23 +117,23 @@ public class PlayerScript : MonoBehaviour{
     private void Enter_Performed(object sender, EventArgs e){
         switch(playerGravity){
             case (PlayerGravity.Up):
-                customGravity = Vector3.up ;
-                transform.rotation= Quaternion.Euler(180, transform.eulerAngles.y, transform.eulerAngles.z);
+                customGravity = transform.up ;
+                playerVisualMidPoint.rotation= Quaternion.Euler(180, transform.eulerAngles.y, transform.eulerAngles.z);
                break;
             case PlayerGravity.Down:
-                customGravity = Vector3.down;
-               transform.rotation= Quaternion.Euler(0f, 0f, 0f);
+                customGravity = -transform.up;
+                playerVisualMidPoint.rotation= Quaternion.Euler(0f, transform.eulerAngles.y, transform.eulerAngles.z);
                 break;
             case PlayerGravity.Left:
-                customGravity = -Vector3.left;
-                transform.rotation= Quaternion.Euler(0f, 0f, -90f);
+                customGravity = -transform.right;
+                playerVisualMidPoint.rotation= Quaternion.Euler(transform.eulerAngles.x, transform.eulerAngles.y, -90f);
                 break;
             case PlayerGravity.Right:
-                customGravity = Vector3.right ;
-                transform.rotation= Quaternion.Euler(0f, 0f, 90f);
+                customGravity = transform.right ;
+                playerVisualMidPoint.rotation= Quaternion.Euler(transform.eulerAngles.x, transform.eulerAngles.y, 90f);
                 break;
             default:
-                customGravity = Vector3.down ;
+                customGravity = -transform.up;
                 break;
         }
     }
