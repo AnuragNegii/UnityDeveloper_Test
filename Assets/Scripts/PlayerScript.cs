@@ -87,14 +87,18 @@ public class PlayerScript : MonoBehaviour{
     }
 
     private void MovePlayer(){
-        float targetAngle = Mathf.Atan2(direction.x, direction.z) * Mathf.Rad2Deg + cam.eulerAngles.y;
-        float angle = Mathf.SmoothDampAngle(transform.eulerAngles.y, targetAngle, ref turnSmoothVelocity, turnSmoothTime);
-        transform.rotation = Quaternion.Euler(0f, angle, 0f);
-        Vector3 moveDirection = Quaternion.Euler(0f, targetAngle, 0f) * Vector3.forward;
         if (inputVector.magnitude > 0.1f && isGrounded){
+            float targetAngle = Mathf.Atan2(direction.x, direction.z) * Mathf.Rad2Deg + cam.eulerAngles.y;
+            float angle = Mathf.SmoothDampAngle(transform.eulerAngles.y, targetAngle, ref turnSmoothVelocity, turnSmoothTime);
+            transform.rotation = Quaternion.Euler(transform.eulerAngles.x, angle, transform.eulerAngles.z);
+            Vector3 moveDirection = Quaternion.Euler(transform.eulerAngles.x, targetAngle, transform.eulerAngles.z) * Vector3.forward;
             rb.AddForce(moveDirection.normalized * moveSpeed, ForceMode.Force );
         }
         else if(inputVector.magnitude > 0.1f && !isGrounded){
+            float targetAngle = Mathf.Atan2(direction.x, direction.z) * Mathf.Rad2Deg + cam.eulerAngles.y;
+            float angle = Mathf.SmoothDampAngle(transform.eulerAngles.y, targetAngle, ref turnSmoothVelocity, turnSmoothTime);
+            transform.rotation = Quaternion.Euler(transform.eulerAngles.x, angle, transform.eulerAngles.z);
+            Vector3 moveDirection = Quaternion.Euler(0f, targetAngle, 0f) * Vector3.forward;
             rb.AddForce(moveDirection.normalized * moveSpeed * airMultiplier, ForceMode.Force);
         }
     }
@@ -111,17 +115,20 @@ public class PlayerScript : MonoBehaviour{
     private void Enter_Performed(object sender, EventArgs e){
         switch(playerGravity){
             case (PlayerGravity.Up):
-                customGravity = transform.up ;
-                transform.rotation = Quaternion.Euler(180f, transform.eulerAngles.y, transform.eulerAngles.z);
+                customGravity = Vector3.up ;
+                transform.rotation= Quaternion.Euler(180, transform.eulerAngles.y, transform.eulerAngles.z);
                break;
             case PlayerGravity.Down:
-                customGravity = -transform.up;
+                customGravity = Vector3.down;
+               transform.rotation= Quaternion.Euler(0f, 0f, 0f);
                 break;
             case PlayerGravity.Left:
-                customGravity = -transform.right;
+                customGravity = -Vector3.left;
+                transform.rotation= Quaternion.Euler(0f, 0f, -90f);
                 break;
             case PlayerGravity.Right:
-                customGravity = transform.right ;
+                customGravity = Vector3.right ;
+                transform.rotation= Quaternion.Euler(0f, 0f, 90f);
                 break;
             default:
                 customGravity = Vector3.down ;
