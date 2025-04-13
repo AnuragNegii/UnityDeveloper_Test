@@ -17,6 +17,8 @@ public class PlayerScript : MonoBehaviour{
 
     //Shadow Indicator for where gravity is gonna go
     [SerializeField] private GameObject shadowPlayer;
+
+    [SerializeField] private Transform playerVisual;
     private float shadowActiveTime = 2.0f;
     private bool shadowActive;
 
@@ -35,12 +37,13 @@ public class PlayerScript : MonoBehaviour{
 
     //Creating custom Gravity with these
     private Vector3 customGravity = Vector3.down;
-    private float gravityStrength = 15f;
+    private float gravityStrength = 40f;
     private PlayerGravity playerGravity;
 
     private void Start(){
         rb = GetComponent<Rigidbody>();
         rb.useGravity = false;
+        rb.freezeRotation = true;
         playerGravity = PlayerGravity.Down;
 
         shadowPlayer.SetActive(false);
@@ -63,9 +66,9 @@ public class PlayerScript : MonoBehaviour{
         }else{
             rb.drag = 0f;
         }
+
         FreeFalling();
         SpeedControl();
-
 
         //gravity indicator activate or deactivate
         if (shadowActive){
@@ -108,19 +111,20 @@ public class PlayerScript : MonoBehaviour{
     private void Enter_Performed(object sender, EventArgs e){
         switch(playerGravity){
             case (PlayerGravity.Up):
-                customGravity = transform.up* gravityStrength;
-                break;
+                customGravity = transform.up ;
+                transform.rotation = Quaternion.Euler(180f, transform.eulerAngles.y, transform.eulerAngles.z);
+               break;
             case PlayerGravity.Down:
-                customGravity = -transform.up* gravityStrength;
+                customGravity = -transform.up;
                 break;
             case PlayerGravity.Left:
-                customGravity = -transform.right* gravityStrength;
+                customGravity = -transform.right;
                 break;
             case PlayerGravity.Right:
-                customGravity = transform.right* gravityStrength;
+                customGravity = transform.right ;
                 break;
             default:
-                customGravity = -transform.up* gravityStrength;
+                customGravity = Vector3.down ;
                 break;
         }
     }
@@ -134,7 +138,7 @@ public class PlayerScript : MonoBehaviour{
     private void Up_Performed(object sender, EventArgs e){
         playerGravity = PlayerGravity.Up;
         shadowPlayer.SetActive(true);
-        shadowPlayer.transform.rotation = Quaternion.Euler(-180f, 0f, 0f);
+        shadowPlayer.transform.rotation = Quaternion.Euler(180f, transform.eulerAngles.y, transform.eulerAngles.z);
         shadowActive = true;
     }
 
@@ -142,21 +146,21 @@ public class PlayerScript : MonoBehaviour{
         playerGravity = PlayerGravity.Down;
         shadowPlayer.SetActive(true);
         shadowActive = true;
-        shadowPlayer.transform.rotation = transform.rotation*Quaternion.Euler(0f, 0f, 0f);
+        shadowPlayer.transform.rotation = Quaternion.Euler(0f, transform.eulerAngles.y, transform.eulerAngles.z);
     }
      
     private void Left_Performed(object sender, EventArgs e){
         playerGravity = PlayerGravity.Left;
         shadowPlayer.SetActive(true);
         shadowActive = true;
-        shadowPlayer.transform.rotation = transform.rotation*Quaternion.Euler(0f, 0f, -90f);
+        shadowPlayer.transform.rotation = Quaternion.Euler(0f, transform.eulerAngles.y, transform.eulerAngles.z- 90f);
     }
 
     private void Right_Performed(object sender, EventArgs e){
         playerGravity = PlayerGravity.Right;
         shadowPlayer.SetActive(true);
         shadowActive = true;
-        shadowPlayer.transform.rotation = transform.rotation*Quaternion.Euler(0f, 0f, 90f);
+        shadowPlayer.transform.rotation = Quaternion.Euler(0f, transform.eulerAngles.y, transform.eulerAngles.z + 90f);
     }
     public bool IsMoving(){
         return isMoving;
@@ -187,6 +191,17 @@ public class PlayerScript : MonoBehaviour{
 
     private void GravityManipulation(){
         rb.AddForce(customGravity * gravityStrength, ForceMode.Acceleration);
+    }
+
+    private void OnDisable(){
+        gameInput.OnEnterPerformed -= Enter_Performed;
+
+        gameInput.OnJumpPerformed -= Jump_Performed;
+        gameInput.OnUpPerformed -= Up_Performed;
+        gameInput.OnDownPerformed -= Down_Performed;
+        gameInput.OnLeftPerformed -= Left_Performed;
+        gameInput.OnRightPerformed -= Right_Performed;
+    
     }
 }
 
